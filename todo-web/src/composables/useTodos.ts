@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue'
 import { getTasks, addTask, toggleTask, type Task } from '@/api/tasks'
 
 export function useTodos() {
-  // <-- inicializa sempre como array (nunca null/undefined)
   const todos = ref<Task[] | null>(null)
   const loading = ref(false)
 
@@ -18,7 +17,6 @@ export function useTodos() {
   }
 
   async function create(taskText: string) {
-
     if (!todos.value) {
       todos.value = []
     }
@@ -56,8 +54,6 @@ export function useTodos() {
       throw err
     }
   }
-
   onMounted(load)
-
   return { todos, loading, load, create, toggle }
 }
