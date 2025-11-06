@@ -1,0 +1,38 @@
+services:
+  mongo-database:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval 'db.adminCommand({ ping: 1 })' --quiet || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  backend-service:
+    container_name: todo-backend
+    build:
+      context: backend-service
+      dockerfile: Dockerfile
+    environment:
+      TODO_BACKEND_HOST: "0.0.0.0"
+      TODO_BACKEND_PORT: "8080"
+      TODO_BACKEND_DATABASE_URI: "mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}?authSource=admin"
+    ports:
+      - 8080:8080
+    depends_on:
+      mongo-database:
+        condition: service_healthy
+    
+  frontend-service:
+    build:
+      context: todo-web
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8080
+    ports:
+      - 8089:80
+    depends_on:
+      - backend-service

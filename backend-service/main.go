@@ -17,7 +17,13 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
 )
 
+var version string
+var buildTime string
+
 func main() {
+	fmt.Println("Version: ", version)
+	fmt.Println("Build Time: ", buildTime)
+
 	server := fmt.Sprintf("%s:%s",
 		utils.GetEnvOrFallback("TODO_BACKEND_HOST", "0.0.0.0"),
 		utils.GetEnvOrFallback("TODO_BACKEND_PORT", "8080"))

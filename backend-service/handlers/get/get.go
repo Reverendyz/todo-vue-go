@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/reverendyz/todo-vue-web/backend-service/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -15,7 +16,7 @@ func FindAll(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 
-	client, err := mongo.Connect(options.Client().ApplyURI("mongodb://admin:password@localhost:27017"))
+	client, err := mongo.Connect(options.Client().ApplyURI(utils.GetEnvOrFallback("TODO_BACKEND_DATABASE_URI", "mongodb://admin:password@localhost:27017")))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

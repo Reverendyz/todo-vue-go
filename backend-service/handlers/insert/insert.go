@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/reverendyz/todo-vue-web/backend-service/types"
+	"github.com/reverendyz/todo-vue-web/backend-service/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -23,7 +24,7 @@ func InsertTask(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 
-	client, _ := mongo.Connect(options.Client().ApplyURI("mongodb://admin:password@localhost:27017"))
+	client, _ := mongo.Connect(options.Client().ApplyURI(utils.GetEnvOrFallback("TODO_BACKEND_DATABASE_URI", "mongodb://admin:password@localhost:27017")))
 	defer func() {
 		if err := client.Disconnect(ctx); err != nil {
 			panic(err)
